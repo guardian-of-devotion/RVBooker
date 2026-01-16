@@ -78,4 +78,44 @@ public class APIClient {
                 .log().all()
                 .extract().response();
     }
+
+    public Response getUsers() {
+        return getRequestSpec()
+                .when()
+                .get(ApiEndpoints.USERS.getPath())
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response getCurrentUser(int userId) {
+        return getRequestSpec()
+                .pathParam("id", userId)
+                .when()
+                .get(ApiEndpoints.USERS.getPath() + "/{id}")
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response createUser(String createUser) {
+        return getRequestSpec()
+                .body(createUser)
+                .when()
+                .post(ApiEndpoints.USERS.getPath())
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response updateUser(int userId, String requestBody) {
+        return getRequestSpec()
+                .pathParam("id", userId)
+                .body(requestBody)
+                .when()
+                .put(ApiEndpoints.USERS.getPath() + "/{id}")
+                .then()
+                .extract()
+                .response();
+    }
 }
