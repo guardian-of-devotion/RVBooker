@@ -118,4 +118,72 @@ public class APIClient {
                 .extract()
                 .response();
     }
+
+    public Response getHotelsList() {
+        return getRequestSpec()
+                .when()
+                .get(ApiEndpoints.HOTELS.getPath())
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response getHotelById(int hotelId) {
+        return getRequestSpec()
+                .pathParam("id", hotelId)
+                .when()
+                .get(ApiEndpoints.HOTELS.getPath() + "/{id}")
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response getHotelWithFilters(String name, String address, String city, String country) {
+        RequestSpecification spec = getRequestSpec();
+
+        if (name != null) {
+            spec = spec.queryParam("name", name);
+        }
+
+        if (address != null) {
+            spec = spec.queryParam("address", address);
+        }
+
+        if (city != null) {
+            spec = spec.queryParam("city", city);
+        }
+
+        if (country != null) {
+            spec = spec.queryParam("country", country);
+        }
+
+        return spec
+                .when()
+                .get(ApiEndpoints.HOTELS.getPath())
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response createNewHotel(String createHotel) {
+        return getRequestSpec()
+                .body(createHotel)
+                .log().all()
+                .when()
+                .post(ApiEndpoints.HOTELS.getPath())
+                .then()
+                .log().all()
+                .extract()
+                .response();
+    }
+
+    public Response deleteHotel(int hotelId) {
+        return getRequestSpec()
+                .pathParam("id", hotelId)
+                .when()
+                .delete(ApiEndpoints.HOTELS.getPath() + "/{id}")
+                .then()
+                .extract()
+                .response();
+    }
 }

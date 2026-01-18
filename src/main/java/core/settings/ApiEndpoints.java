@@ -4,7 +4,8 @@ public enum ApiEndpoints {
     HEALTH("/heath"),
     AUTH("/auth/login"),
     REGISTER("/auth/register"),
-    USERS("/users");
+    USERS("/users"),
+    HOTELS("/hotels");
 
     private final String path;
 
