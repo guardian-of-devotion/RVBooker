@@ -6,19 +6,26 @@ import core.clients.APIClient;
 import core.models.CreateHotel;
 import core.models.CreatedHotel;
 import core.models.HotelResponse;
+import io.qameta.allure.*;
+import io.qameta.allure.junit5.AllureJunit5;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(AllureJunit5.class)
+@Epic("Работа с данными отеля")
+@Feature("Получение информации об отеле по ID")
 public class GetHotelByIdTest {
     private APIClient apiClient;
     private ObjectMapper objectMapper;
     private CreateHotel createHotel;
     private CreatedHotel createdHotel;
 
+    @Step("Подготовка данных об отеле и отправка POST-запроса на создание")
     @BeforeEach
     public void setup() throws JsonProcessingException {
         apiClient = new APIClient();
@@ -47,6 +54,8 @@ public class GetHotelByIdTest {
         createdHotel = objectMapper.readValue(responseBody, CreatedHotel.class);
     }
 
+    @Step("Отправка GET-запроса на получение информации об отеле по ID")
+    @Severity(SeverityLevel.NORMAL)
     @Test
     public void testGetHotelById() throws JsonProcessingException {
         Response response = apiClient.getHotelById(createdHotel.getId());
@@ -74,6 +83,7 @@ public class GetHotelByIdTest {
         assertThat(hotelResponse.getUpdatedAt()).isNotNull();
     }
 
+    @Step("Отправка DELETE-запроса на удаление отеля")
     @AfterEach
     public void tearDown() {
         apiClient.deleteHotel(createdHotel.getId());

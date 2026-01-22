@@ -6,7 +6,11 @@ import java.util.Properties;
 
 import core.settings.ApiEndpoints;
 import io.restassured.RestAssured;
+import io.restassured.filter.Filter;
+import io.restassured.filter.FilterContext;
 import io.restassured.response.Response;
+import io.restassured.specification.FilterableRequestSpecification;
+import io.restassured.specification.FilterableResponseSpecification;
 import io.restassured.specification.RequestSpecification;
 
 public class APIClient {
@@ -38,7 +42,8 @@ public class APIClient {
         return RestAssured.given()
                 .baseUri(baseUrl)
                 .header("Content-Type", "application/json")
-                .header("Accept", "application/json");
+                .header("Accept", "application/json")
+                .filter(addAuthTokenFilter());
     }
 
     public Response checkHeath() {
@@ -54,10 +59,38 @@ public class APIClient {
         return getRequestSpec()
                 .body(requestBody)
                 .when()
-                .post(ApiEndpoints.AUTH.getPath())
+                .post(ApiEndpoints.AUTH.getPath() + "/login")
                 .then()
                 .extract().response();
     }
+
+    public void createToken(String email, String password) {
+        String requestBody = String.format("{ \"email\": \"%s\", \"password\": \"%s\" }", email, password);
+
+        Response response = getRequestSpec()
+                .body(requestBody)
+                .when()
+                .post(ApiEndpoints.AUTH.getPath() + "/login")
+                .then()
+                .extract()
+                .response();
+
+        token = response.jsonPath().getString("token");
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    private Filter addAuthTokenFilter() {
+        return (FilterableRequestSpecification requestSpec, FilterableResponseSpecification responseSpec, FilterContext ctx) -> {
+            if (token != null) {
+                requestSpec.header("Authorization", "Bearer " + token);
+            }
+                return ctx.next(requestSpec, responseSpec);
+        };
+    }
+
 
     public Response register(String requestBody) {
         return getRequestSpec()
@@ -182,6 +215,26 @@ public class APIClient {
                 .pathParam("id", hotelId)
                 .when()
                 .delete(ApiEndpoints.HOTELS.getPath() + "/{id}")
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response updateHotel(int hotelId, String requestBody) {
+        return getRequestSpec()
+                .pathParam("id", hotelId)
+                .body(requestBody)
+                .when()
+                .put(ApiEndpoints.HOTELS.getPath() + "/{id}")
+                .then()
+                .extract()
+                .response();
+    }
+
+    public Response getCountOfUnreadMessages() {
+        return getRequestSpec()
+                .when()
+                .get(ApiEndpoints.SUPPORT.getPath() + "/unread-count")
                 .then()
                 .extract()
                 .response();

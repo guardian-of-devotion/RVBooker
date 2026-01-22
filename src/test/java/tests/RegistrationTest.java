@@ -5,19 +5,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.clients.APIClient;
 import core.models.RegistrationRequest;
 import core.models.RegistrationResponse;
+import io.qameta.allure.*;
+import io.qameta.allure.junit5.AllureJunit5;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@ExtendWith(AllureJunit5.class)
+@Epic("Регистрация")
+@Feature("Проверка успешной регистрации")
 public class RegistrationTest {
     private APIClient apiClient;
     private ObjectMapper objectMapper;
     private RegistrationRequest registrationRequest;
     private RegistrationResponse registrationResponse;
 
+    @Step("Подготовка данных для регистрации")
     @BeforeEach
     public void setup() {
         apiClient = new APIClient();
@@ -34,6 +41,8 @@ public class RegistrationTest {
         registrationRequest.setPhone("+7 (999) 100-10-11");
     }
 
+    @Step("Отправка POST-запроса на /users на регистрацию пользователя")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testRegistration() throws JsonProcessingException {
         String requestBody = objectMapper.writeValueAsString(registrationRequest);
@@ -55,6 +64,7 @@ public class RegistrationTest {
         assertThat(registrationResponse.getUser().getIs_active()).isEqualTo(true);
     }
 
+    @Step("Отправка DELETE-запроса на /users на удаление пользователя")
     @AfterEach
     public void tearDown() {
         Response response = apiClient.deleteUser(registrationResponse.getUser().getId());

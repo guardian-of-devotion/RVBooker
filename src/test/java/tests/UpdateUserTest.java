@@ -5,19 +5,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.clients.APIClient;
 import core.models.UpdateUser;
 import core.models.UserResponse;
+import io.qameta.allure.*;
+import io.qameta.allure.junit5.AllureJunit5;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(AllureJunit5.class)
+@Epic("Работа с данными пользователя")
+@Feature("Обновление данных пользователя")
 public class UpdateUserTest {
     private APIClient apiClient;
     private ObjectMapper objectMapper;
     private UpdateUser updateUser;
     private UserResponse userResponse;
 
+    @Step("Подготовка данных пользователя для обновления")
     @BeforeEach
     public void setup() {
         apiClient = new APIClient();
@@ -33,6 +40,8 @@ public class UpdateUserTest {
         updateUser.setPassword("abiba123");
     }
 
+    @Step("Отправка PUT-запроса на /users для обновления пользователя")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testUpdateUser() throws JsonProcessingException {
         String requestBody = objectMapper.writeValueAsString(updateUser);

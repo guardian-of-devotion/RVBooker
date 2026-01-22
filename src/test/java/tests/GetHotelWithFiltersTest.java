@@ -7,9 +7,12 @@ import core.clients.APIClient;
 import core.models.CreateHotel;
 import core.models.CreatedHotel;
 import core.models.HotelsList;
+import io.qameta.allure.*;
+import io.qameta.allure.junit5.AllureJunit5;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -17,6 +20,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(AllureJunit5.class)
+@Epic("Работа с данными отеля")
+@Feature("Получение конкретного отеля путем использования фильтрации")
 public class GetHotelWithFiltersTest {
     private APIClient apiClient;
     private ObjectMapper objectMapper;
@@ -51,6 +57,7 @@ public class GetHotelWithFiltersTest {
         createdHotel = objectMapper.readValue(responseBody, CreatedHotel.class);
     }
 
+    @Severity(SeverityLevel.CRITICAL)
     @ParameterizedTest
     @ArgumentsSource(tests.providers.HotelsFilterProvider.class)
     public void testGetHotelWithFilters(String name, String address, String city, String country) throws JsonProcessingException {

@@ -6,14 +6,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.clients.APIClient;
 import core.models.UserResponse;
 import core.models.UsersList;
+import io.qameta.allure.*;
+import io.qameta.allure.junit5.AllureJunit5;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+@ExtendWith(AllureJunit5.class)
+@Epic("Работа с данными пользователя")
+@Feature("Получение списка пользователей")
 public class GetUsersTest {
     private APIClient apiClient;
     private ObjectMapper objectMapper;
@@ -26,6 +32,7 @@ public class GetUsersTest {
         userResponse = new UserResponse();
     }
 
+    @Step("Отправка GET-запроса на /users на получение списка пользователей")
     @Test
     public void testGetUsers() throws JsonProcessingException {
         Response response = apiClient.getUsers();
@@ -52,6 +59,8 @@ public class GetUsersTest {
         }
     }
 
+    @Step("Отправка GET-запроса на /users на получение пользователя по ID")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testGetUsersById() throws JsonProcessingException {
         Response response = apiClient.getCurrentUser(2091);

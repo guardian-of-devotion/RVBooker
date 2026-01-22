@@ -2,10 +2,11 @@ package core.settings;
 
 public enum ApiEndpoints {
     HEALTH("/heath"),
-    AUTH("/auth/login"),
+    AUTH("/auth"),
     REGISTER("/auth/register"),
     USERS("/users"),
-    HOTELS("/hotels");
+    HOTELS("/hotels"),
+    SUPPORT("/support");
 
     private final String path;
 

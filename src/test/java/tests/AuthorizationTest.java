@@ -5,18 +5,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.clients.APIClient;
 import core.models.AuthorizationRequest;
 import core.models.AuthorizationResponse;
+import io.qameta.allure.*;
+import io.qameta.allure.junit5.AllureJunit5;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@ExtendWith(AllureJunit5.class)
+@Epic("Авторизация")
+@Feature("Проверка успешной авторизации")
 public class AuthorizationTest {
     private APIClient apiClient;
     private ObjectMapper objectMapper;
     private AuthorizationRequest authorizationRequest;
     private AuthorizationResponse authorizationResponse;
 
+    @Step("Установка логина и пароля")
     @BeforeEach
     public void setup() {
         apiClient = new APIClient();
@@ -26,6 +33,8 @@ public class AuthorizationTest {
         authorizationRequest.setPassword("Password123");
     }
 
+    @Step("Отправка POST-запроса на /auth/login для авторизации пользователя")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testAuthorization() throws JsonProcessingException {
         String requestBody = objectMapper.writeValueAsString(authorizationRequest);

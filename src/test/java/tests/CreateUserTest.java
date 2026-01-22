@@ -5,21 +5,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.clients.APIClient;
 import core.models.CreateUser;
 import core.models.CreatedUser;
+import io.qameta.allure.*;
+import io.qameta.allure.junit5.AllureJunit5;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+@ExtendWith(AllureJunit5.class)
+@Epic("Работа с данными пользователя")
+@Feature("Создание нового пользователя")
 public class CreateUserTest {
     private APIClient apiClient;
     private ObjectMapper objectMapper;
     private CreateUser createUser;
     private CreatedUser createdUser;
 
+    @Step("Подготовка данных пользователя")
     @BeforeEach
     public void setup() {
         apiClient = new APIClient();
@@ -35,6 +41,8 @@ public class CreateUserTest {
         createUser.setRole("USER");
     }
 
+    @Step("Отправка POST-запроса на /users для создания нового пользователя")
+    @Severity(SeverityLevel.CRITICAL)
     @Test
     public void testCreateUser() throws JsonProcessingException {
         String requestBody = objectMapper.writeValueAsString(createUser);
@@ -52,6 +60,7 @@ public class CreateUserTest {
         assertEquals(createdUser.getRole(), createUser.getRole());
     }
 
+    @Step("Отправка DELETE-запроса на /users для удаления пользователя")
     @AfterEach
     public void tearDown() {
         apiClient.deleteUser(createdUser.getId());
